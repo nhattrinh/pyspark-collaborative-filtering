@@ -16,8 +16,8 @@ conf.setMaster('local[4]')
 
 # Load and parse the data
 data = sc.textFile('./train.dat')
-ratings = data.map(lambda l: l.split('\t'))\
-    .map(lambda l: Rating(int(l[0]), int(l[1]), float(l[2])))
+ratings = data.map(lambda line: line.split('\t'))\
+    .map(lambda line: Rating(int(line[0]), int(line[1]), float(line[2])))
 
 # Build the recommendation model using Alternating Least Squares
 rank = 10
@@ -31,7 +31,7 @@ testratings = testdata.map(lambda line: line.split('\t'))\
 predictions = model.predictAll(testratings.map(lambda d: (int(d[0]), int(d[1]))))
 
 # Write the RDD to format.dat file, where each row is a score prediction
-predictions.map(lambda row: int(row[3])) \
+predictions.map(lambda rating: int(rating[3])) \
     .saveAsTextFile('./format.dat')
 
 sc.stop()
